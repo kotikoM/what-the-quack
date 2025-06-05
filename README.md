@@ -1,47 +1,36 @@
-# Template: template-ros
+# Final Project in Software Engineering Practical Course
 
-This template provides a boilerplate repository
-for developing ROS-based software in Duckietown.
+## 🚀 How to run
 
-**NOTE:** If you want to develop software that does not use
-ROS, check out [this template](https://github.com/duckietown/template-basic).
+### 1. Clone the Repository
 
+### 2. Make ROS Nodes Executable
 
-## How to use it
+```bash
+cd what-the-quack
+```
 
-### 1. Fork this repository
+```bash
+chmod +x ./packages/main/src/camera_node.py
+```
 
-Use the fork button in the top-right corner of the github page to fork this template repository.
+```bash
+chmod +x ./packages/main/src/wheel_control_node.py
+```
 
+### 3. Build the Project
 
-### 2. Create a new repository
+```bash
+dts devel build -f
+```
 
-Create a new repository on github.com while
-specifying the newly forked template repository as
-a template for your new repository.
-
-
-### 3. Define dependencies
-
-List the dependencies in the files `dependencies-apt.txt` and
-`dependencies-py3.txt` (apt packages and pip packages respectively).
-
-
-### 4. Place your code
-
-Place your code in the directory `/packages/` of
-your new repository.
+### 4. Run on Duckiebot
 
 
-### 5. Setup launchers
+```bash
+dts devel run -R ROBOTNAME -L default -X
+```
 
-The directory `/launchers` can contain as many launchers (launching scripts)
-as you want. A default launcher called `default.sh` must always be present.
+> **Note:** `default` refers to the launch script in the `launchers/` directory and should not be renamed.
 
-If you create an executable script (i.e., a file with a valid shebang statement)
-a launcher will be created for it. For example, the script file 
-`/launchers/my-launcher.sh` will be available inside the Docker image as the binary
-`dt-launcher-my-launcher`.
-
-When launching a new container, you can simply provide `dt-launcher-my-launcher` as
-command.
+---
