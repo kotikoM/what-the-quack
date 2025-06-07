@@ -8,12 +8,15 @@ from std_msgs.msg import Float64
 from cv_bridge import CvBridge
 import cv2
 
+from utils.sign_detection import SignDetector
+
 
 class CoordinatorNode(DTROS):
     def __init__(self):
         super(CoordinatorNode, self).__init__(node_name='coordinator_node', node_type=NodeType.VISUALIZATION)
 
         self.bridge = CvBridge()
+        self.detector = SignDetector()
 
         self._vehicle_name = os.environ['VEHICLE_NAME']
         self._camera_topic = f"/{self._vehicle_name}/camera_node/image/compressed"
@@ -44,23 +47,20 @@ class CoordinatorNode(DTROS):
         """Process incoming compressed image messages"""
         # Convert compressed image to OpenCV format using cv_bridge
         image = self.bridge.compressed_imgmsg_to_cv2(msg)
-        self.display_image(image)
+        result = self.detector.process_image(image)
+        sign_name = result["sign_name"]
+        frame = result["frame"]
+
+        if sign_name:
+            rospy.loginfo(f"Detected: {sign_name}")
+        cv2.imshow(self._window_name, frame)
+        cv2.waitKey(1)
 
     def publish_left_motor(self, speed):
         self.left_motor.publish(Float64(speed))
 
     def publish_right_motor(self, speed):
         self.right_motor.publish(Float64(speed))
-
-
-    def display_image(self, image):
-        """Display the image with basic info overlay"""
-        h, w = image.shape[:2]
-        cv2.putText(image, f'Resolution: {w}x{h}', (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-
-        cv2.imshow(self._window_name, image)
-        cv2.waitKey(1)
 
 
 if __name__ == '__main__':

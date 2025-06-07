@@ -13,6 +13,7 @@ git clone git@github.com:kotikoM/what-the-quack.git
 cd what-the-quack
 chmod +x ./packages/main/src/coordinator_node.py
 chmod +x ./packages/main/src/wheel_control_node.py
+chmod +x ./packages/main/src/utils/sign_detection.py
 ```
 
 ### 3. Build the Project
