@@ -3,18 +3,15 @@
 ## 🚀 How to run
 
 ### 1. Clone the Repository
+```bash
+git clone git@github.com:kotikoM/what-the-quack.git
+```
 
 ### 2. Make ROS Nodes Executable
 
 ```bash
 cd what-the-quack
-```
-
-```bash
 chmod +x ./packages/main/src/camera_node.py
-```
-
-```bash
 chmod +x ./packages/main/src/wheel_control_node.py
 ```
 
