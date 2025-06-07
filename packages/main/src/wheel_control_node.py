@@ -30,10 +30,8 @@ class WheelControlNode(DTROS):
             wheels_topic, WheelsCmdStamped, queue_size=1)
 
     # Construct subscribers for throttle values
-        self.left_motor = rospy.Subscriber(
-            "left_motor", Float64, self.callback_left)
-        self.right_motor = rospy.Subscriber(
-            "right_motor", Float64, self.callback_right)
+        self.left_motor = rospy.Subscriber("left_motor_adj", Float64, self.callback_left)
+        self.right_motor = rospy.Subscriber("right_motor_adj", Float64, self.callback_right)
 
         self.bridge = CvBridge()
 
