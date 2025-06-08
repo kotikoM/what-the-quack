@@ -48,12 +48,17 @@ class CoordinatorNode(DTROS):
         # Convert compressed image to OpenCV format using cv_bridge
         image = self.bridge.compressed_imgmsg_to_cv2(msg)
         result = self.detector.process_image(image)
-        sign_name = result["sign_name"]
-        frame = result["frame"]
 
-        if sign_name:
-            rospy.loginfo(f"Detected: {sign_name}")
-        cv2.imshow(self._window_name, frame)
+        frame1 = result["contours_frame"]
+        frame2 = result["squares_frame"]
+        warped_images = result["warped_images"]
+
+        cv2.imshow("contours", frame1)
+        cv2.imshow("squares", frame2)
+
+        for i, warped in enumerate(warped_images):
+            cv2.imshow(f"warped_{i}", warped)
+
         cv2.waitKey(1)
 
     def publish_left_motor(self, speed):
