@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import cv2
 import apriltag
+import numpy as np
 
 class SignDetector:
     def detect_sign(self, frame):
@@ -13,7 +14,16 @@ class SignDetector:
         detector = apriltag.Detector(options)
         detections = detector.detect(gray)
         visual_frame = right_half.copy()
+
+        filtered_detections = []
         for detection in detections:
+            corners = np.array(detection.corners, dtype=np.float32)
+            area = cv2.contourArea(corners)
+            if area < 10_000:
+                continue
+
+            filtered_detections.append(detection)
+
             for i in range(4):
                 pt1 = tuple(map(int, detection.corners[i]))
                 pt2 = tuple(map(int, detection.corners[(i + 1) % 4]))
@@ -26,5 +36,5 @@ class SignDetector:
 
         return {
             "frame": visual_frame,
-            "detections": detections
+            "detections": filtered_detections
         }

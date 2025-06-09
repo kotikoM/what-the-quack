@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from duckietown_msgs.msg import WheelsCmdStamped, LEDPattern
+from duckietown_msgs.msg import WheelsCmdStamped
 from duckietown.dtros import DTROS, NodeType
 from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Float64
@@ -33,14 +33,11 @@ class CoordinatorNode(DTROS):
         self._vehicle_name = os.environ['VEHICLE_NAME']
         self._camera_topic = f"/{self._vehicle_name}/camera_node/image/compressed"
         self.wheels_topic = f"/{self._vehicle_name}/wheels_driver_node/wheels_cmd"
-        self.led_topic = f"/{self._vehicle_name}/led_emitter_node/led_pattern"
-
         self._window_name = "Duck Camera Feed"
         cv2.namedWindow(self._window_name, cv2.WINDOW_AUTOSIZE)
 
         self.sub = rospy.Subscriber(self._camera_topic, CompressedImage, self.on_image_processing)
         self._publisher = rospy.Publisher(self.wheels_topic, WheelsCmdStamped, queue_size=1)
-        self.led_pub = rospy.Publisher(self.led_topic, LEDPattern, queue_size=1)
 
         self.left_motor = rospy.Publisher("left_motor", Float64, queue_size=1)
         self.right_motor = rospy.Publisher("right_motor", Float64, queue_size=1)
@@ -75,22 +72,13 @@ class CoordinatorNode(DTROS):
             sign_name = self.road_signs.get(d.tag_id)
             if sign_name == 'stop':
                 rospy.loginfo("Detected stop sign")
-                self.set_led("RED")
             elif sign_name == 'slow down':
                 rospy.loginfo("Detected slow down sign")
-                self.set_led("YELLOW")
             elif sign_name == 'parking':
                 rospy.loginfo("Detected parking sign")
-                self.set_led("BLUE")
 
 
         cv2.waitKey(1)
-
-    def set_led(self, pattern_name):
-        pass
-        # msg = LEDPattern()
-        # msg.pattern = pattern_name
-        # self.led_pub.publish(msg)
 
     def publish_left_motor(self, speed):
         self.left_motor.publish(Float64(speed))
