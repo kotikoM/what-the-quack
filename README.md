@@ -11,7 +11,7 @@ git clone git@github.com:kotikoM/what-the-quack.git
 
 ```bash
 cd what-the-quack
-chmod +x ./packages/main/src/coordinator_node.py
+chmod +x ./packages/main/src/sign_detection_node.py
 chmod +x ./packages/main/src/wheel_control_node.py
 chmod +x ./packages/main/src/utils/sign_detection.py
 ```
