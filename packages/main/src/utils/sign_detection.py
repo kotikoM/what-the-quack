@@ -19,7 +19,7 @@ class SignDetector:
         for detection in detections:
             corners = np.array(detection.corners, dtype=np.float32)
             area = cv2.contourArea(corners)
-            if area < 10_000:
+            if area < 5_000:
                 continue
 
             filtered_detections.append(detection)
