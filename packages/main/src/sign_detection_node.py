@@ -35,6 +35,7 @@ class CoordinatorNode(DTROS):
         self.sign_activated_time = None
         self.sign_reset_pending = False
         self.sign_active_duration = 5  # seconds
+        self.freedom_published = False
 
         self._vehicle_name = os.environ['VEHICLE_NAME']
         self._camera_topic = f"/{self._vehicle_name}/camera_node/image/compressed"
@@ -44,14 +45,16 @@ class CoordinatorNode(DTROS):
         rospy.loginfo(f"CoordinatorNode initialized for vehicle: {self._vehicle_name}")
 
     def on_image_processing(self, msg):
-        # Check if current sign logic should expire
         current_time = time.time()
         if self.current_sign and (current_time - self.sign_activated_time > self.sign_active_duration):
             rospy.loginfo(f"Sign '{self.current_sign}' expired.")
             self.current_sign = None
-            self.sign_publisher.publish('freedom')
+            if not self.freedom_published:
+                self.sign_publisher.publish('freedom')
+                rospy.loginfo("Published: freedom")
+                self.freedom_published = True
 
-        # look for new sign, if old expired and send valid sign
+        # Only look for new sign if no current one
         if self.current_sign is None:
             image = self.bridge.compressed_imgmsg_to_cv2(msg)
             result = self.sign_detector.detect_sign(image)
@@ -69,6 +72,8 @@ class CoordinatorNode(DTROS):
                 self.sign_activated_time = current_time
                 self.sign_publisher.publish(sign_name)
                 rospy.loginfo(f"Activated sign logic for: {sign_name}")
+                self.freedom_published = False
+                break
 
         cv2.waitKey(1)
 

@@ -369,7 +369,6 @@ class CameraReaderNode(DTROS):
 
         # Publish motor commands
         if not self.shutting_down:
-            rospy.loginfo(f'executing current sign - {self.current_sign}')
 
             if self.current_sign == 'stop':
                 left_motor, right_motor = 0, 0
@@ -472,7 +471,7 @@ class CameraReaderNode(DTROS):
     def on_sign_detected(self, msg):
         sign_name = msg.data
         self.current_sign = sign_name
-
+        rospy.loginfo(f'Set current sign to  - {self.current_sign}')
 
 if __name__ == '__main__':
     node = CameraReaderNode(node_name='camera_reader_node')
