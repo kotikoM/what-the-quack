@@ -48,6 +48,7 @@ class CoordinatorNode(DTROS):
         if self.current_sign and (current_time - self.sign_activated_time > self.sign_active_duration):
             rospy.loginfo(f"Sign '{self.current_sign}' expired.")
             self.current_sign = None
+            self.sign_publisher.publish('freedom')
 
         # look for new sign, if old expired and send valid sign
         if self.current_sign is None:

@@ -26,6 +26,8 @@ class CameraReaderNode(DTROS):
     def __init__(self, node_name):
         super(CameraReaderNode, self).__init__(node_name=node_name, node_type=NodeType.VISUALIZATION)
 
+        self.current_sign = 'freedom'
+
         # Initialize parameters
         self.base_speed = BASE_SPEED
         self.curve_speed = CURVE_SPEED
@@ -367,6 +369,21 @@ class CameraReaderNode(DTROS):
 
         # Publish motor commands
         if not self.shutting_down:
+            rospy.loginfo(f'executing current sign - {self.current_sign}')
+
+            if self.current_sign == 'stop':
+                left_motor, right_motor = 0, 0
+            elif self.current_sign == 'slow down':
+                left_motor *= 0.5
+                right_motor *= 0.5
+            elif self.current_sign == 'parking':
+                # TODO
+                pass
+            elif self.current_sign == 'freedom':
+                # leave default
+                pass
+
+
             self.left_motor.publish(left_motor)
             self.right_motor.publish(right_motor)
 
@@ -468,29 +485,11 @@ class CameraReaderNode(DTROS):
 
         cX = int(M["m10"] / M["m00"])
         cY = int(M["m01"] / M["m00"])
-        return (cX, cY)
+        return cX, cY
 
     def on_sign_detected(self, msg):
         sign_name = msg.data
-
-        if sign_name == 'stop':
-            rospy.loginfo(f'Received sign {msg}')
-            self.base_speed = 0
-            self.curve_speed = 0
-            rospy.sleep(5)
-            self._restore_speeds()
-        elif sign_name == 'slow down':
-            self.base_speed = self.base_speed / 2
-            self.curve_speed = self.curve_speed / 2
-            rospy.sleep(5)
-            self._restore_speeds()
-        elif sign_name == 'parking':
-            rospy.loginfo('Executing parking')
-
-    def _restore_speeds(self):
-        rospy.loginfo(f"[{self.node_name}] restoring normal speeds")
-        self.base_speed  = BASE_SPEED
-        self.curve_speed = CURVE_SPEED
+        self.current_sign = sign_name
 
 
 if __name__ == '__main__':
