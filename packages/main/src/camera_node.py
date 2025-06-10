@@ -447,24 +447,6 @@ class CameraReaderNode(DTROS):
             cv2.putText(debug_image, f"White curve: {white_curvature:.1f}", (10, 240),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
-        # Add legend to debug window
-        legend_y = h - 140
-        cv2.rectangle(debug_image, (10, legend_y), (400, h - 10), (0, 0, 0), -1)
-        cv2.putText(debug_image, "Legend:", (15, legend_y + 15),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
-        cv2.putText(debug_image, "Yellow: Left lane boundary", (15, legend_y + 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
-        cv2.putText(debug_image, "White: Right lane boundary", (15, legend_y + 45),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
-        cv2.putText(debug_image, "Green: Target position (adaptive)", (15, legend_y + 60),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
-        cv2.putText(debug_image, "Blue: Robot center reference", (15, legend_y + 75),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
-        cv2.putText(debug_image, "Curve-aware following: Closer to curving lines", (15, legend_y + 90),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
-        cv2.putText(debug_image, "Negative curvature = Left turn, Positive = Right turn", (15, legend_y + 105),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (200, 200, 200), 1)
-
         cv2.imshow(self._window, vis_image)
         cv2.imshow(self._debug_window, debug_image)
         cv2.waitKey(1)

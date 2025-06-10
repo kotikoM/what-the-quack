@@ -16,6 +16,7 @@ class CoordinatorNode(DTROS):
     road_signs = {
         20: "stop",
         24: "stop",
+        25: "stop",
         26: "stop",
         31: "stop",
         32: "stop",
