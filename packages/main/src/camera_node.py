@@ -469,6 +469,18 @@ class CameraReaderNode(DTROS):
             color.a = 1.0
             pattern.rgb_vals.append(color)
         self.led_publisher.publish(pattern)
+    
+    def set_green_leds(self):
+        """Turn on red LEDs"""
+        pattern = LEDPattern()
+        for i in range(5):
+            color = ColorRGBA()
+            color.r = 1.0
+            color.g = 1.0
+            color.b = 0.0
+            color.a = 1.0
+            pattern.rgb_vals.append(color)
+        self.led_publisher.publish(pattern)
 
     def shutdown_callback(self, event):
         rospy.signal_shutdown("Parking complete")
