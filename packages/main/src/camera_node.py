@@ -3,13 +3,13 @@ import os
 import rospy
 from duckietown.dtros import DTROS, NodeType
 from sensor_msgs.msg import CompressedImage
-from duckietown_msgs.msg import WheelsCmdStamped
-import numpy as np
-import cv2
+from duckietown_msgs.msg import WheelsCmdStamped, LEDPattern
+from std_msgs.msg import Float64, String, ColorRGBA
 from cv_bridge import CvBridge
-from std_msgs.msg import Float64, String
 from collections import deque
+import numpy as np
 import time
+import cv2
 
 # Tunable parameters - Adjusted for smoother turning
 BASE_SPEED = 0.18  # Reduced base speed for better control
@@ -53,6 +53,8 @@ class CameraReaderNode(DTROS):
         self._vehicle_name = os.environ['VEHICLE_NAME']
         self._camera_topic = f"/{self._vehicle_name}/camera_node/image/compressed"
         wheels_topic = f"/{self._vehicle_name}/wheels_driver_node/wheels_cmd"
+        led_topic = f"/{self._vehicle_name}/led_emitter_node/led_pattern"
+
         self._window = "camera-reader"
         self._debug_window = "debug-masks"
         self.bridge = CvBridge()
@@ -66,7 +68,11 @@ class CameraReaderNode(DTROS):
         self.left_motor = rospy.Publisher("left_motor", Float64, queue_size=1)
         self.right_motor = rospy.Publisher("right_motor", Float64, queue_size=1)
 
+        # LED publisher
+        self.led_publisher = rospy.Publisher(led_topic, LEDPattern, queue_size=1)
+
         self.shutting_down = False
+        self.shutdown_timer = None
         rospy.on_shutdown(self.shutdown_hook)
 
     def shutdown_hook(self):
@@ -376,8 +382,10 @@ class CameraReaderNode(DTROS):
                 left_motor *= 0.5
                 right_motor *= 0.5
             elif self.current_sign == 'parking':
-                # TODO
-                pass
+                left_motor, right_motor = 0, 0
+                if self.shutdown_timer is None:
+                    self.set_red_leds()
+                    self.shutdown_timer = rospy.Timer(rospy.Duration(5.0), self.shutdown_callback, oneshot=True)
             elif self.current_sign == 'freedom':
                 # leave default
                 pass
@@ -449,6 +457,21 @@ class CameraReaderNode(DTROS):
         cv2.imshow(self._window, vis_image)
         cv2.imshow(self._debug_window, debug_image)
         cv2.waitKey(1)
+
+    def set_red_leds(self):
+        """Turn on red LEDs"""
+        pattern = LEDPattern()
+        for i in range(5):
+            color = ColorRGBA()
+            color.r = 1.0
+            color.g = 0.0
+            color.b = 0.0
+            color.a = 1.0
+            pattern.rgb_vals.append(color)
+        self.led_publisher.publish(pattern)
+
+    def shutdown_callback(self, event):
+        rospy.signal_shutdown("Parking complete")
 
     def find_line_centroid(self, mask):
         """Find the centroid of the largest contour in the mask"""
