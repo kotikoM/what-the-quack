@@ -32,3 +32,7 @@ dts devel run -R ROBOTNAME -L default -X
 > **Note:** `default` refers to the launch script in the `launchers/` directory and should not be renamed.
 
 ---
+
+```bash
+dts duckiebot keyboard_control ROBOTNAME
+```

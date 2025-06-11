@@ -71,7 +71,6 @@ class CoordinatorNode(DTROS):
                 self.current_sign = sign_name
                 self.sign_activated_time = current_time
                 self.sign_publisher.publish(sign_name)
-                rospy.loginfo(f"Activated sign logic for: {sign_name}")
                 self.freedom_published = False
                 break
 
