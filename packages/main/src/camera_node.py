@@ -12,7 +12,7 @@ import time
 import cv2
 
 # Tunable parameters - Adjusted for smoother turning
-BASE_SPEED = 0.22  # Reduced base speed for better control
+BASE_SPEED = 0.18  # Reduced base speed for better control
 CURVE_SPEED = 0.16  # Further reduced speed for curves
 P_GAIN = 0.35  # Reduced proportional gain for smoother response
 D_GAIN = 0.25  # Increased derivative gain for better curve handling
