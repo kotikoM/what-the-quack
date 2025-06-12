@@ -12,7 +12,7 @@ import time
 import cv2
 
 # Tunable parameters - Adjusted for smoother turning
-BASE_SPEED = 0.18  # Reduced base speed for better control
+BASE_SPEED = 0.22  # Reduced base speed for better control
 CURVE_SPEED = 0.16  # Further reduced speed for curves
 P_GAIN = 0.35  # Reduced proportional gain for smoother response
 D_GAIN = 0.25  # Increased derivative gain for better curve handling
@@ -346,7 +346,10 @@ class CameraReaderNode(DTROS):
         # Enhanced recovery behavior if no lines detected
         if total_line_pixels < 300:  # Very few line pixels detected
             # More conservative recovery - slow down and gentle search pattern
-            recovery_speed = current_speed * 0.3
+            recovery_speed = current_speed
+            if self.base_speed - current_speed >= 0.15:
+                recovery_speed = current_speed - 0.1
+            
             if len(self.yellow_centroid_history) > 0 and any(c is not None for c in self.yellow_centroid_history):
                 # Had yellow line recently - search left
                 left_motor = recovery_speed - 0.05
@@ -464,8 +467,8 @@ class CameraReaderNode(DTROS):
         for i in range(5):
             color = ColorRGBA()
             color.r = 1.0
-            color.g = 0.0
-            color.b = 0.0
+            color.g = 1.0
+            color.b = 1.0
             color.a = 1.0
             pattern.rgb_vals.append(color)
         self.led_publisher.publish(pattern)
